@@ -1,18 +1,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 public class A_StarSearch
 {
-
-    private Grid grid;
     private GridCell startCell;
     private GridCell targetCell;
-    public A_StarSearch(Grid grid, GridCell startCell, GridCell targetCell)
+    public A_StarSearch( GridCell startCell, GridCell targetCell)
     {
-        this.grid = grid;
         this.startCell = startCell;
         this.targetCell = targetCell;
         startCell.G_Cost = 0;
@@ -21,6 +18,8 @@ public class A_StarSearch
 
     public List<GridCell> StartSearch()
     {
+        Stopwatch sw = Stopwatch.StartNew();
+        sw.Start(); // Start the stopwatch
         //initialize cost to 0;
         float currentCost = 0;
         List<GridCell> openList = new List<GridCell>();
@@ -36,6 +35,8 @@ public class A_StarSearch
             // If the target node is reached, reconstruct the path from start to target
             if (currentCell == targetCell)
             {
+                sw.Stop();
+                UnityEngine.Debug.Log(sw.Elapsed);
                 return ReconstructPath(targetCell);
             }
 
@@ -63,7 +64,7 @@ public class A_StarSearch
                 neighbor.F_Cost = neighbor.G_Cost + neighbor.H_Star(targetCell);
             }
         }
-        Debug.LogError("COULD NOT FIND A PATH, TERMINATING...");
+        UnityEngine.Debug.LogError("COULD NOT FIND A PATH, TERMINATING...");       
         return null;
     }
 

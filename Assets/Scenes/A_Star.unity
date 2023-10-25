@@ -133,7 +133,7 @@ GameObject:
   m_Component:
   - component: {fileID: 63883702}
   m_Layer: 0
-  m_Name: Gridmaker
+  m_Name: DungeonDrawer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -434,3 +434,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cellPrefab: {fileID: 3584877105559441417, guid: 1e4532a29ae5c1a4eb25d0dcaeb26aaf, type: 3}
   cellSpacing: 2
+  gridType: 0
+  path: []
+  gridSize: 20
+  removeCells: 150

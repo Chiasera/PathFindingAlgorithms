@@ -36,7 +36,7 @@ public class GridCell : MonoBehaviour
 
     private void Awake()
     {
-        _renderer = GetComponent<Renderer>();
+        _renderer = GetComponent<Renderer>();      
     }
     public void Initialize(Vector2Int position, CellType type, Grid grid)
     {
@@ -89,8 +89,12 @@ public class GridCell : MonoBehaviour
     {
         _renderer.material = pathMat;
     }
-    public void RemoveFromPath()
+
+    public void ResetCell()
     {
+        g_cost = Mathf.Infinity;
+        f_cost = Mathf.Infinity;
+        cameFrom = null;
         _renderer.material = baseMat;
     }
 }

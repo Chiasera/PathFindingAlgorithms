@@ -31,23 +31,51 @@ public class Grid : MonoBehaviour
     public float cellSpacing;
     public GridType gridType = GridType.Connected4;
     public List<GridCell> path;
+    [Range(1, 100)]
+    public int gridSize;
+    [Range(1, 500)]
+    public int removeCells;
     private void Awake()
     {
         cells = new Dictionary<Vector2Int, GridCell>();
-        GenerateGrid(4, GridType.Connected4);
-        A_StarSearch alg = new A_StarSearch(this, cells[new Vector2Int(0,0)], cells[new Vector2Int(2, 3)]);
+        GenerateGrid(gridSize, GridType.Connected4);
+        RandomA_StarSearch();
+    }
+
+    private void RandomA_StarSearch()
+    {
+        Vector2Int startPosition = new Vector2Int(Random.Range(0, gridSize - 1), Random.Range(0, gridSize - 1));
+        Vector2Int targetPosition = new Vector2Int(Random.Range(0, gridSize - 1), Random.Range(0, gridSize - 1));
+        //------------------ Create some holes within the grid, mostly for debug purposes ----------------------------
+        for (int i = 0; i < removeCells; i++)
+        {
+            Vector2Int removePosition = new Vector2Int(Random.Range(0, gridSize - 1), Random.Range(0, gridSize - 1));
+            if (removePosition != startPosition && removePosition != targetPosition)
+            {
+                try
+                {
+                    GridCell cell = cells[removePosition];
+                    foreach (GridCell neighbor in cell.GetNeighbors())
+                    {
+                        neighbor.GetNeighbors().Remove(cell);
+                    }
+                    Destroy(cells[removePosition].gameObject);
+                }
+                catch
+                {
+                    //ignore
+                }
+            }
+        }
+        //----------------------------------------------------------------------------------------------------------
+        A_StarSearch alg = new A_StarSearch(cells[startPosition], cells[targetPosition]);
         path = alg.StartSearch();
-        foreach(var cell in path)
+        foreach (var cell in path)
         {
             cell.AddToPath();
         }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
 
     //generate a grid of size n
     public void GenerateGrid(int gridSize, GridType type)
