@@ -30,7 +30,7 @@ public class Grid : MonoBehaviour
     [Range(0, 10)]
     public float cellSpacing;
     public GridType gridType = GridType.Connected4;
-    public List<GridCell> path;
+    public List<Cell> path;
     [Range(1, 100)]
     public int gridSize;
     [Range(1, 500)]

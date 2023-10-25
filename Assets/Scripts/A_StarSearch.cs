@@ -6,29 +6,29 @@ using UnityEngine;
 
 public class A_StarSearch
 {
-    private GridCell startCell;
-    private GridCell targetCell;
-    public A_StarSearch( GridCell startCell, GridCell targetCell)
+    private Cell startCell;
+    private Cell targetCell;
+    public A_StarSearch( Cell startCell, Cell targetCell)
     {
         this.startCell = startCell;
         this.targetCell = targetCell;
         startCell.G_Cost = 0;
-        startCell.F_Cost = startCell.H_Star(targetCell);
+        startCell.F_Cost = startCell.Heuristic(targetCell);
     }
 
-    public List<GridCell> StartSearch()
+    public List<Cell> StartSearch()
     {
         Stopwatch sw = Stopwatch.StartNew();
         sw.Start(); // Start the stopwatch
         //initialize cost to 0;
         float currentCost = 0;
-        List<GridCell> openList = new List<GridCell>();
-        List<GridCell> closedList = new List<GridCell>();
+        List<Cell> openList = new List<Cell>();
+        List<Cell> closedList = new List<Cell>();
         openList.Add(startCell);
         //while open list is not empty
         while (openList.Count > 0)
         {
-            GridCell currentCell = GetLowestCostCell(openList, ref currentCost);
+            Cell currentCell = GetLowestCostCell(openList, ref currentCost);
             openList.Remove(currentCell);
             closedList.Add(currentCell);
 
@@ -40,7 +40,7 @@ public class A_StarSearch
                 return ReconstructPath(targetCell);
             }
 
-            foreach (GridCell neighbor in currentCell.GetNeighbors())
+            foreach (Cell neighbor in currentCell.GetNeighbors())
             {
                 //if already visited that cell
                 if (closedList.Contains(neighbor))
@@ -61,16 +61,16 @@ public class A_StarSearch
                 // This path is the best until now, store it
                 neighbor.CameFrom = currentCell;
                 neighbor.G_Cost = tentative_gCost;
-                neighbor.F_Cost = neighbor.G_Cost + neighbor.H_Star(targetCell);
+                neighbor.F_Cost = neighbor.G_Cost + neighbor.Heuristic(targetCell);
             }
         }
         UnityEngine.Debug.LogError("COULD NOT FIND A PATH, TERMINATING...");       
         return null;
     }
 
-    private List<GridCell> ReconstructPath(GridCell goalCell)
+    private List<Cell> ReconstructPath(Cell goalCell)
     {
-        List<GridCell> path = new List<GridCell>();
+        List<Cell> path = new List<Cell>();
         while(goalCell.CameFrom != null)
         {
             path.Add(goalCell);
@@ -80,11 +80,11 @@ public class A_StarSearch
         return path;
     }
 
-    private GridCell GetLowestCostCell(List<GridCell> cells, ref float currentCost)
+    private Cell GetLowestCostCell(List<Cell> cells, ref float currentCost)
     {
-        GridCell bestCell = null;
+        Cell bestCell = null;
         float f = Mathf.Infinity;
-        foreach(GridCell cell in cells)
+        foreach(Cell cell in cells)
         {
             //f(s) = g(s) + h(s) = cost_so_far + heuristic where cost_so_far
             if(cell.F_Cost < f)
