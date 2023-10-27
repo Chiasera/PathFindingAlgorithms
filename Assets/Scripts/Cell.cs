@@ -2,29 +2,36 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum CellType
+{
+    Basic, Special, Obstacle, Goal
+}
 public abstract class Cell : MonoBehaviour
 {
     [SerializeField]
-    internal CellType cellType;
+    protected CellType cellType;
     [SerializeField]
-    internal List<Cell> neighbors;
-    [SerializeField]
-    internal float g_cost = Mathf.Infinity;
-    [SerializeField]
-    internal float f_cost = Mathf.Infinity;
-    [SerializeField]
-    internal Cell cameFrom;
+    protected List<Cell> neighbors;
     public Material baseMat;
     public Material pathMat;
-    internal Renderer _renderer;
+    public Material goalMat;
+    public Material obstacleMat;
+    protected Renderer _renderer;
+    protected bool isBooked;
 
-    internal float travelCost;
+    protected float travelCost;
+    public bool IsBooked { get { return isBooked; } set { isBooked = value; } }
     public float TravelCost { get { return travelCost; } }
-    public float G_Cost { get { return g_cost; } set { g_cost = value; } }
-    public float F_Cost { get { return f_cost; } set { f_cost = value; } }
-    public Cell CameFrom { get { return cameFrom; } set { cameFrom = value; } }
-    public CellType CellType { get { return cellType; } }
-
+    public CellType CellType
+    {
+        get { return cellType; }
+        set
+        {
+            cellType = value;
+            UpdateMaterial();
+            UpdateTravelCost();
+        }
+    }
 
     private void Awake()
     {
@@ -34,19 +41,36 @@ public abstract class Cell : MonoBehaviour
     public void Initialize(CellType type)
     {
         cellType = type;
-        travelCost = ComputeTravelCost();
         neighbors = new List<Cell>();
     }
 
-    internal float ComputeTravelCost()
+    //Update the material -- for debug purposes
+    private void UpdateMaterial()
     {
         switch (cellType)
         {
-            case CellType.Basic:
-                return 1.0f;
-            case CellType.Special: return 2.0f;
+            case CellType.Obstacle:
+                _renderer.material = obstacleMat;
+                break;
+            case CellType.Goal:
+                _renderer.material = goalMat;
+                break;
         }
-        return 0.0f;
+    }
+
+    protected void UpdateTravelCost()
+    {
+        switch (cellType)
+        {
+            case CellType.Basic: travelCost = 1.0f;
+                break;
+            case CellType.Special: travelCost =  2.0f;
+                break;
+            case CellType.Obstacle: travelCost = Mathf.Infinity;
+                break;
+            case CellType.Goal: travelCost = 1.0f;
+                break;
+        }
     }
 
     public List<Cell> GetNeighbors()
@@ -61,14 +85,14 @@ public abstract class Cell : MonoBehaviour
 
     public void AddToPath()
     {
-        _renderer.material = pathMat;
+        if (this.cellType != CellType.Goal)
+        {
+            _renderer.material = pathMat;
+        }
     }
 
     public void ResetCell()
     {
-        g_cost = Mathf.Infinity;
-        f_cost = Mathf.Infinity;
-        cameFrom = null;
         _renderer.material = baseMat;
     }
 

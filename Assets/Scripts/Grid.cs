@@ -9,12 +9,23 @@ public enum GridType
 
 public static class Direction2D
 {
-    public static IEnumerable<Vector2Int> AllDirections => new List<Vector2Int>
+    public static IEnumerable<Vector2Int> Direction8By8 => new List<Vector2Int>
     {
         new Vector2Int(-1, 0),
         new Vector2Int(1, 0),
         new Vector2Int(0, -1),
-        new Vector2Int(0, 1)
+        new Vector2Int(0, 1),
+        new Vector2Int(1, 1),
+        new Vector2Int(1, -1),
+        new Vector2Int(-1, 1),
+        new Vector2Int(-1, -1),
+    };
+    public static IEnumerable<Vector2Int> Direction4By4 => new List<Vector2Int>
+    {
+        new Vector2Int(-1, 0),
+        new Vector2Int(1, 0),
+        new Vector2Int(0, -1),
+        new Vector2Int(0, 1),
     };
 }
 
@@ -29,27 +40,31 @@ public class Grid : MonoBehaviour
     private GameObject cellPrefab;
     [Range(0, 10)]
     public float cellSpacing;
-    public GridType gridType = GridType.Connected4;
-    public List<Cell> path;
+    public GridType gridType;
+    public Stack<Cell> path;
     [Range(1, 100)]
-    public int gridSize;
+    public int gridSize_N;
+    [Range(1, 100)]
+    public int gridSize_M;
     [Range(1, 500)]
     public int removeCells;
+
+    public Dictionary<Vector2Int, GridCell> Cells {  get { return cells; } }
     private void Awake()
     {
         cells = new Dictionary<Vector2Int, GridCell>();
-        GenerateGrid(gridSize, GridType.Connected4);
-        RandomA_StarSearch();
+        GenerateGrid(gridSize_N, gridSize_M, GridType.Connected8);      
+        //RandomA_StarSearch();
     }
 
     private void RandomA_StarSearch()
     {
-        Vector2Int startPosition = new Vector2Int(Random.Range(0, gridSize - 1), Random.Range(0, gridSize - 1));
-        Vector2Int targetPosition = new Vector2Int(Random.Range(0, gridSize - 1), Random.Range(0, gridSize - 1));
+        Vector2Int startPosition = new Vector2Int(Random.Range(0, gridSize_N - 1), Random.Range(0, gridSize_N - 1));
+        Vector2Int targetPosition = new Vector2Int(Random.Range(0, gridSize_N - 1), Random.Range(0, gridSize_N - 1));
         //------------------ Create some holes within the grid, mostly for debug purposes ----------------------------
-        for (int i = 0; i < removeCells; i++)
+        /*for (int i = 0; i < removeCells; i++)
         {
-            Vector2Int removePosition = new Vector2Int(Random.Range(0, gridSize - 1), Random.Range(0, gridSize - 1));
+            Vector2Int removePosition = new Vector2Int(Random.Range(0, gridSize_N - 1), Random.Range(0, gridSize_N - 1));
             if (removePosition != startPosition && removePosition != targetPosition)
             {
                 try
@@ -66,7 +81,7 @@ public class Grid : MonoBehaviour
                     //ignore
                 }
             }
-        }
+        }*/
         //----------------------------------------------------------------------------------------------------------
         A_StarSearch alg = new A_StarSearch(cells[startPosition], cells[targetPosition]);
         path = alg.StartSearch();
@@ -78,11 +93,12 @@ public class Grid : MonoBehaviour
 
 
     //generate a grid of size n
-    public void GenerateGrid(int gridSize, GridType type)
+    public void GenerateGrid(int gridSize_N, int gridSize_M, GridType type)
     {
-        for (int i = 0; i < gridSize; i++)
+        gridType = type;
+        for (int i = 0; i < gridSize_N; i++)
         {
-            for (int j = 0; j < gridSize; j++)
+            for (int j = 0; j < gridSize_M; j++)
             {
                 //h* is not necessarily unique, but the gridCell position is
                 //key cannot be changed, value can, the heuristic will be adjusted later on
@@ -103,7 +119,7 @@ public class Grid : MonoBehaviour
     {
         foreach (GridCell cell in cells.Values)
         {
-            foreach (var direction in Direction2D.AllDirections)
+            foreach (var direction in Direction2D.Direction8By8)
             {
                 GridCell neighbor;
                 cells.TryGetValue(cell.GridPosition + direction, out neighbor);
@@ -124,6 +140,7 @@ public class Grid : MonoBehaviour
     {
         int a = position1.x - position2.x;
         int b = position1.y - position2.y;
+        Debug.Log(Mathf.Sqrt(a * a + b * b));
         return Mathf.Sqrt(a * a + b * b);
     }
 }

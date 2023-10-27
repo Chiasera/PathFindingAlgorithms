@@ -111,11 +111,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cellType: 0
-  gridPosition: {x: 0, y: 0}
   neighbors: []
-  g_cost: Infinity
-  f_cost: Infinity
-  cameFrom: {fileID: 0}
   baseMat: {fileID: 2100000, guid: b3f8f17147de310408841737f5d0ece2, type: 2}
   pathMat: {fileID: 2100000, guid: 4d724e46a8d2d014a8377c69ea0fc381, type: 2}
-  _renderer: {fileID: 0}
+  goalMat: {fileID: 2100000, guid: 345c7d6b32aeca24eb55dcda6c492a57, type: 2}
+  obstacleMat: {fileID: 2100000, guid: e0812818ab663b444852150a10152f4e, type: 2}
+  heuristic: 0
+  gridPosition: {x: 0, y: 0}

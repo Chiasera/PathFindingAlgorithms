@@ -2,10 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum CellType
-{
-    Basic, Special,
-}
 public class GridCell : Cell
 {
     [SerializeField]
@@ -24,13 +20,16 @@ public class GridCell : Cell
     //returns h* for a given grid cell
     public override float Heuristic(Cell target)
     {
-        switch (grid.gridType)
+        return grid.ManhatanDistance(gridPosition, ((GridCell)target).gridPosition);
+        /*switch (grid.gridType)
         {
             case GridType.Connected4:
+                heuristic = grid.ManhatanDistance(gridPosition, ((GridCell)target).gridPosition);
                 return grid.ManhatanDistance(gridPosition, ((GridCell)target).gridPosition);
             case GridType.Connected8:
+                heuristic = grid.EuclidianDistance(gridPosition, ((GridCell)target).gridPosition);
                 return grid.EuclidianDistance(gridPosition, ((GridCell)target).gridPosition);
         }
-        return 0;
+        return 0;*/
     }
 }
