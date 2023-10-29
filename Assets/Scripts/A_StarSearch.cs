@@ -22,8 +22,8 @@ public class A_StarSearch
     private Cell startCell;
     private Cell targetCell;
     private Dictionary<Cell, CellSearchState> searchStates;
-    private List<Vector3> splineControlPoints;
-    public List<Vector3> SplineControlPoints { get { return splineControlPoints; } }
+    private Dictionary<Vector3, Vector3> splineControlPoints;
+    public Dictionary<Vector3, Vector3> SplineKnotsPositions { get { return splineControlPoints; } }
     public A_StarSearch(Cell startCell, Cell targetCell)
     {
         this.startCell = startCell;
@@ -111,7 +111,7 @@ public class A_StarSearch
         // Ensure splineControlPoints is initialized.
         if (splineControlPoints == null)
         {
-            splineControlPoints = new List<Vector3>();
+            splineControlPoints = new Dictionary<Vector3, Vector3>();
         }
         splineControlPoints.Clear();
 
@@ -127,7 +127,7 @@ public class A_StarSearch
             // Add a control point if the direction changes.
             if (nextDirection.normalized != currentDirection.normalized)
             {
-                splineControlPoints.Add(goalCell.transform.position);
+                splineControlPoints.Add(goalCell.transform.position, nextDirection);
             }
 
             // Push the current cell onto the path stack.
@@ -136,7 +136,7 @@ public class A_StarSearch
             // Move to the previous cell in the path.
             goalCell = searchStates[goalCell].CameFrom;
         }
-        splineControlPoints.Add(startCell.transform.position);
+        splineControlPoints.Add(startCell.transform.position, nextDirection);
         // Return the reconstructed path.
         return path;
     }

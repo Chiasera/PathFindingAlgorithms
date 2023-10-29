@@ -113,8 +113,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 187e303c174599d4dacd9c04e566d4da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  splinePrefab: {fileID: 8305743653402270581, guid: 2f5c27e2cd440ca439ad4deeaab7094e, type: 3}
   speed: 400
-  rotationSpeed: 3.9
+  rotationSpeed: 4
+  pathCurvature: 5
 --- !u!54 &8621807133081314449
 Rigidbody:
   m_ObjectHideFlags: 0
