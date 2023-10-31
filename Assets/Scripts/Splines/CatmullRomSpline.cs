@@ -36,7 +36,7 @@ public class CatmullRomSpline : Spline
         return Catmull_Rom_Matrix_Scaled;
     }
 
-    protected override Vector3 DerivativeAtSegment(float t, int segment)
+    public override Vector3 DerivativeAtSegment(float t, int segment)
     {
         return Compute(Knots[segment].transform.position, Knots[segment + 1].transform.position, Knots[segment + 2].transform.position,
             Knots[segment + 3].transform.position, t, tVectorDerivative);

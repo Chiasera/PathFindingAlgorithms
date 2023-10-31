@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using UnityEngine;
 
 //seperate the search state from the cell itself
@@ -19,6 +20,7 @@ public class CellSearchState
 
 public class A_StarSearch
 {
+    private int maxIterationsPerFrame = 30;
     private Cell startCell;
     private Cell targetCell;
     private Dictionary<Cell, CellSearchState> searchStates;
@@ -38,7 +40,7 @@ public class A_StarSearch
         searchStates[startCell] = startState;
     }
 
-    public Stack<Cell> StartSearch()
+    public async Task<Stack<Cell>> StartSearch()
     {
         Stopwatch sw = Stopwatch.StartNew();
         sw.Start(); // Start the stopwatch
@@ -48,8 +50,17 @@ public class A_StarSearch
         List<Cell> closedList = new List<Cell>();
         openList.Add(startCell);
         //while open list is not empty
+        int iterationCount = 0;
         while (openList.Count > 0)
         {
+            if(iterationCount > maxIterationsPerFrame)
+            {
+                //If takes too much time, wait for next frame
+                await Task.Yield();
+                iterationCount = 0; 
+
+            }
+            iterationCount++;
             Cell currentCell = GetLowestCostCell(openList, ref currentCost);
             openList.Remove(currentCell);
             closedList.Add(currentCell);
@@ -61,7 +72,10 @@ public class A_StarSearch
                 UnityEngine.Debug.Log("Path finding time: " + sw.Elapsed.TotalMilliseconds + "ms");
                 return ReconstructPath(targetCell);
             }
-
+            if(startCell == null)
+            {
+                
+            }
             foreach (Cell neighbor in currentCell.GetNeighbors())
             {
                 //if already visited that cell
@@ -107,6 +121,7 @@ public class A_StarSearch
         // Initialize directions to zero.
         Vector3 currentDirection = Vector3.zero;
         Vector3 nextDirection = Vector3.zero;
+        int cellDelta = 0;
 
         // Ensure splineControlPoints is initialized.
         if (splineControlPoints == null)
@@ -117,26 +132,23 @@ public class A_StarSearch
 
         // Initialize the path stack.
         Stack<Cell> path = new Stack<Cell>();
-
         // Iterate back from the goal cell using the CameFrom references.
         while (searchStates[goalCell].CameFrom != null)
         {
             currentDirection = nextDirection;
             nextDirection = searchStates[goalCell].CameFrom.transform.position - goalCell.transform.position;
-
             // Add a control point if the direction changes.
-            if (nextDirection.normalized != currentDirection.normalized)
+            if(cellDelta % 2 == 0)
             {
                 splineControlPoints.Add(goalCell.transform.position, nextDirection);
             }
-
             // Push the current cell onto the path stack.
             path.Push(goalCell);
-
             // Move to the previous cell in the path.
             goalCell = searchStates[goalCell].CameFrom;
+            cellDelta++;
         }
-        splineControlPoints.Add(startCell.transform.position, nextDirection);
+        splineControlPoints.Add(startCell.transform.position, currentDirection);
         // Return the reconstructed path.
         return path;
     }
@@ -147,15 +159,19 @@ public class A_StarSearch
         Cell bestCell = null;
         float f = Mathf.Infinity;
         foreach (Cell cell in cells)
-        {
+        {         
             var state = searchStates[cell];
-            if (state.F_Cost < f)
+            //if surrounded by obstacles still allow to go through
+            if (state.F_Cost <= f)
             {
                 f = state.F_Cost;
                 bestCell = cell;
             }
         }
-        currentCost += bestCell.TravelCost;
+        if(bestCell != null && bestCell.CellType != CellType.Obstacle)
+        {
+            currentCost += bestCell.TravelCost;
+        }
         return bestCell;
     }
 }

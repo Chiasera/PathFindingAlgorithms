@@ -11,12 +11,13 @@ GameObject:
   - component: {fileID: 2998349801148305578}
   - component: {fileID: 2998349801148305573}
   - component: {fileID: 2998349801148305572}
-  - component: {fileID: 2998349801148305575}
-  - component: {fileID: 2998349801148305579}
-  - component: {fileID: 8621807133081314449}
+  - component: {fileID: 8230907395538323355}
+  - component: {fileID: 3283545256956741165}
+  - component: {fileID: 6662040166536498653}
+  - component: {fileID: 5111322243380536791}
   m_Layer: 0
   m_Name: NavMeshAgent
-  m_TagString: Untagged
+  m_TagString: Human
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -87,37 +88,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &2998349801148305575
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2998349801148305574}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.5
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &2998349801148305579
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2998349801148305574}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 187e303c174599d4dacd9c04e566d4da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  splinePrefab: {fileID: 8305743653402270581, guid: 2f5c27e2cd440ca439ad4deeaab7094e, type: 3}
-  speed: 400
-  rotationSpeed: 4
-  pathCurvature: 5
---- !u!54 &8621807133081314449
+--- !u!54 &8230907395538323355
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -133,6 +104,48 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 84
   m_CollisionDetection: 0
+--- !u!114 &3283545256956741165
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2998349801148305574}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1fec4686688c864ead55fd5b22ae6d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  movementSpeed: 1
+  rotationSpeed: 5
+  splinePrefab: {fileID: 8305743653402270581, guid: 695f9e1c8fce9e14498194083c963993, type: 3}
+  pathCurvature: 5
+--- !u!65 &6662040166536498653
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2998349801148305574}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 6.1360836, y: 1.4988238, z: 6.490468}
+  m_Center: {x: 0.01088953, y: 0.24941188, z: 0.040938973}
+--- !u!65 &5111322243380536791
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2998349801148305574}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 2, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &8888005936917123396
 GameObject:
   m_ObjectHideFlags: 0

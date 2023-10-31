@@ -4,7 +4,7 @@ using UnityEngine;
 
 public enum CellType
 {
-    Basic, Special, Obstacle, Goal
+    Basic, Special, Obstacle, Goal, Boundary
 }
 public abstract class Cell : MonoBehaviour
 {
@@ -17,11 +17,14 @@ public abstract class Cell : MonoBehaviour
     public Material goalMat;
     public Material obstacleMat;
     protected Renderer _renderer;
-    protected bool isBooked;
+    protected bool isOccupied;
+    protected bool isBooked = false;
+
 
     protected float travelCost;
-    public bool IsBooked { get { return isBooked; } set { isBooked = value; } }
+    public bool IsOccupied { get { return isOccupied; } set { isOccupied = value; } }
     public float TravelCost { get { return travelCost; } }
+    public bool IsBooked { get { return isBooked; } set { isBooked = value; } }
     public CellType CellType
     {
         get { return cellType; }
@@ -42,6 +45,8 @@ public abstract class Cell : MonoBehaviour
     {
         cellType = type;
         neighbors = new List<Cell>();
+        //add this cell to the available cells on initialization
+        GameManager.availableCells.Add(this);
     }
 
     //Update the material -- for debug purposes
@@ -53,6 +58,12 @@ public abstract class Cell : MonoBehaviour
                 _renderer.material = obstacleMat;
                 break;
             case CellType.Goal:
+                _renderer.material = goalMat;
+                break;
+            case CellType.Basic:
+                _renderer.material = baseMat;
+                break;
+            case CellType.Boundary:
                 _renderer.material = goalMat;
                 break;
         }
@@ -69,6 +80,9 @@ public abstract class Cell : MonoBehaviour
             case CellType.Obstacle: travelCost = Mathf.Infinity;
                 break;
             case CellType.Goal: travelCost = 1.0f;
+                break;
+            case CellType.Boundary:
+                travelCost = 1.0f;
                 break;
         }
     }

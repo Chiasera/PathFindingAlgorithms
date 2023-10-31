@@ -10,6 +10,6 @@ public class SplineKnot : MonoBehaviour
     protected virtual void OnDrawGizmos()
     {
         Gizmos.color = Color.cyan;
-        Gizmos.DrawSphere(transform.position, 0.5f);
+        Gizmos.DrawSphere(transform.position, 0.15f);
     }
 }

@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8305743653402269835}
-  - component: {fileID: 7406169745633226088}
+  - component: {fileID: -3985621018585238041}
   m_Layer: 0
-  m_Name: EmptySpline
+  m_Name: BaseSplineCatmull
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -32,7 +32,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7406169745633226088
+--- !u!114 &-3985621018585238041
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -41,9 +41,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 8305743653402270581}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 75314805787f3654c8440560e8128920, type: 3}
+  m_Script: {fileID: 11500000, guid: 51aad07cd419768449c59fef9a335ae1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  splineKnotPrefab: {fileID: 353242574460732819, guid: 3ff4205686cea7341ab8a55dca0a5c6e, type: 3}
+  splineKnotPrefab: {fileID: 353242574460732819, guid: 5fa96fe12d21c01489cc9918588b9203, type: 3}
   Knots: []
   t: 0

@@ -8,37 +8,69 @@ public class GameManager : MonoBehaviour
     private Grid grid;
     [SerializeField]
     private GameObject agentPrefab;
+    [SerializeField]
+    private GameObject chairPrefab;
     public static Cell goalCell;
+    public static List<Cell> availableCells = new List<Cell>();
+    public static List<AgentAI> humans;
+    public static List<AgentAI> chairs;
+
     // Start is called before the first frame update
     void Start()
     {
-        grid = FindObjectOfType<Grid>();
-        /*------------ For  debug purposes, try adding some obstacles ------------*/
-        for(int i = 0; i < grid.gridSize_N * 2; i++)
+        if(availableCells == null)
         {
-            Vector2Int randomObstacle = new Vector2Int(Random.Range(0, grid.gridSize_N - 1), Random.Range(0, grid.gridSize_N - 1));
-            grid.Cells[randomObstacle].CellType = CellType.Obstacle;
+            availableCells = new List<Cell>();
         }
-        /*-----------------------------------------------------------------------*/
+        if(humans == null)
+        {
+            humans = new List<AgentAI>();
+        }
+        if(chairs == null)
+        {
+            chairs = new List<AgentAI>();
+        }
+        humans.Clear();
+        chairs.Clear();
+        availableCells.Clear();
+        grid = FindObjectOfType<Grid>();
+        grid.GenerateGrid(GridType.Connected8);
         //Set random goal onto the map
-        Vector2Int randGoalPos = new Vector2Int(Random.Range(0, grid.gridSize_N - 1), Random.Range(0, grid.gridSize_N - 1));
-        goalCell = grid.Cells[randGoalPos];
+        int randGoalPosition = Random.Range(0, availableCells.Count - 1);
+        goalCell = availableCells[randGoalPosition];
         goalCell.CellType = CellType.Goal; //randomly choose a goal
-        SpawnAgent();
-    }
-
-    public async void OnWaitSpawnAgent(int ms)
-    {
-        await Task.Delay(ms);
-        SpawnAgent();
+        availableCells.Remove(goalCell);
+        for (int i = 0; i < 20; i++)
+        {
+            SpawnAgent();
+        }
+        for(int i = 0; i < 20; i++)
+        {
+            SpawnChair();
+        }
     }
 
     public void SpawnAgent()
     {
-        Vector2Int randAgentPos = new Vector2Int(Random.Range(0, grid.gridSize_N - 1), Random.Range(0, grid.gridSize_N - 1));
-        NavMeshAgent agent = Instantiate(agentPrefab).GetComponent<NavMeshAgent>();
-        agent.transform.position = new Vector3(randAgentPos.x, 2, randAgentPos.y);
-        agent.SetCurrentCell(grid.Cells[randAgentPos]);
-        agent.Activate(5000);
+        int randAgentPosition = Random.Range(0, availableCells.Count - 1); 
+        HumanAI agent = Instantiate(agentPrefab).GetComponent<HumanAI>();
+        agent.transform.position = availableCells[randAgentPosition].transform.position + Vector3.up * 1.5f;
+        agent.SetCurrentCell(availableCells[randAgentPosition]);
+        agent.Activate(3000, GameManager.goalCell);
+        availableCells.Remove(availableCells[randAgentPosition]);
+        humans.Add(agent);
+    }
+
+    //assuming the chair will be spawn after the player
+    public void SpawnChair()
+    {
+        int randomChairPosition = Random.Range(0, availableCells.Count - 1);
+        ChairAI chair = Instantiate(chairPrefab).GetComponent<ChairAI>();
+        chair.transform.position = availableCells[randomChairPosition].transform.position + Vector3.up * 1.5f;
+        chair.Activate(humans);
+        chair.SetCurrentCell(availableCells[randomChairPosition]);
+        //availableCells[randomChairPosition].CellType = CellType.Obstacle;
+        availableCells.Remove(availableCells[randomChairPosition]);
+        chairs.Add(chair);
     }
 }

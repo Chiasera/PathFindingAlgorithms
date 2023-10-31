@@ -39,12 +39,12 @@ public class BezierSpline : Spline
     // and other applications where the shape and behavior of the curve are important.
     // We can derive a velocity by constraining the handles so that they are mirrored
     // Not C2 continuous
-    protected override Vector3 DerivativeAtSegment(float t, int segment)
+    public override Vector3 DerivativeAtSegment(float t, int segment)
     {
         return Compute(Knots[segment].transform.position,
             ((BezierSplineKnot)Knots[segment]).mainHandle.transform.position,
             ((BezierSplineKnot)Knots[segment + 1]).constrainedHandle.transform.position,
                     Knots[segment + 1].transform.position,
-                    t % Mathf.Max(segment, 1), tVectorDerivative);
+                    t % Mathf.Max(segment, 1), tVectorDerivative).normalized;
     }
 }

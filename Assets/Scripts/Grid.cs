@@ -53,47 +53,11 @@ public class Grid : MonoBehaviour
     private void Awake()
     {
         cells = new Dictionary<Vector2Int, GridCell>();
-        GenerateGrid(gridSize_N, gridSize_M, GridType.Connected8);      
-        //RandomA_StarSearch();
-    }
-
-    private void RandomA_StarSearch()
-    {
-        Vector2Int startPosition = new Vector2Int(Random.Range(0, gridSize_N - 1), Random.Range(0, gridSize_N - 1));
-        Vector2Int targetPosition = new Vector2Int(Random.Range(0, gridSize_N - 1), Random.Range(0, gridSize_N - 1));
-        //------------------ Create some holes within the grid, mostly for debug purposes ----------------------------
-        /*for (int i = 0; i < removeCells; i++)
-        {
-            Vector2Int removePosition = new Vector2Int(Random.Range(0, gridSize_N - 1), Random.Range(0, gridSize_N - 1));
-            if (removePosition != startPosition && removePosition != targetPosition)
-            {
-                try
-                {
-                    GridCell cell = cells[removePosition];
-                    foreach (GridCell neighbor in cell.GetNeighbors())
-                    {
-                        neighbor.GetNeighbors().Remove(cell);
-                    }
-                    Destroy(cells[removePosition].gameObject);
-                }
-                catch
-                {
-                    //ignore
-                }
-            }
-        }*/
-        //----------------------------------------------------------------------------------------------------------
-        A_StarSearch alg = new A_StarSearch(cells[startPosition], cells[targetPosition]);
-        path = alg.StartSearch();
-        foreach (var cell in path)
-        {
-            cell.AddToPath();
-        }
     }
 
 
     //generate a grid of size n
-    public void GenerateGrid(int gridSize_N, int gridSize_M, GridType type)
+    public void GenerateGrid(GridType type)
     {
         gridType = type;
         for (int i = 0; i < gridSize_N; i++)

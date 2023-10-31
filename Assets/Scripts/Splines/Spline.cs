@@ -19,7 +19,7 @@ public abstract class Spline : MonoBehaviour
     public CurveInfo CurveInfo { get { return curveInfo; } }
     public List<SplineKnot> Knots;
     [SerializeField]
-    [Range(0, 10)] // max of 10 spline points, could go further it needed
+    [Range(0, 50)] // max of 10 spline points, could go further it needed
     protected float t;
     public float T { get { return t; } set { t = value; } }
 
@@ -54,7 +54,7 @@ public abstract class Spline : MonoBehaviour
 
     // Abstract methods to be implemented in derived classes
     protected abstract Vector3 CubicSplineAtSegment(float t, int segment);
-    protected abstract Vector3 DerivativeAtSegment(float t, int segment);
+    public abstract Vector3 DerivativeAtSegment(float t, int segment);
 
     // Function to multiply two Vector4s
     protected float MultiplyVectors(Vector4 v1, Vector4 v2)
@@ -67,13 +67,18 @@ public abstract class Spline : MonoBehaviour
         // Update the spline's current position and velocity based on the time parameter t
         for (int i = 0; i < Knots.Count - LookAheadCoefficient(); i++)
         {
-            if (t > i && t < i + 1)
+            if (t >= i && t < i + 1)
             {
-                segmentLength = (Knots[i].transform.position + Knots[i + 1].transform.position).magnitude;
+                segmentLength = (Knots[i].transform.position - Knots[i + 1].transform.position).magnitude;
                 curveInfo.currentPosition = CubicSplineAtSegment(t, i);
                 curveInfo.velocity = DerivativeAtSegment(t % Mathf.Max(i, 1), i);
             }
         }
+    }
+
+    public void Delete()
+    {
+        Destroy(gameObject);
     }
 
     // Computes the matrix operation for a given input function on parameter t
@@ -99,27 +104,39 @@ public abstract class Spline : MonoBehaviour
     }
 
     // Create the spline based on a dictionary of anchor points and the agent's position
-    public void Create(Dictionary<Vector3, Vector3> anchors, Vector3 agentPosition)
+    public void Create(Dictionary<Vector3, Vector3> anchors)
     {
         // Instantiate spline knots based on anchor points
         foreach (var point in anchors.Reverse())
         {
+            if(this.GetType() == typeof(CatmullRomSpline))
+            {
+                if (Knots.Count == 0)
+                {
+                    SplineKnot firstKnot = Instantiate(splineKnotPrefab, point.Key, Quaternion.identity).GetComponent<SplineKnot>();
+                    firstKnot.transform.position += Vector3.up * 1.5f;
+                    Knots.Add(firstKnot);
+                }
+                else if (Knots.Count == anchors.Count)
+                {
+                    SplineKnot lastKnot = Instantiate(splineKnotPrefab, point.Key, Quaternion.identity).GetComponent<SplineKnot>();
+                    lastKnot.transform.position += Vector3.up * 1.5f;
+                    Knots.Add(lastKnot);
+                }
+            }           
             SplineKnot knot = Instantiate(splineKnotPrefab, point.Key, Quaternion.identity).GetComponent<SplineKnot>();
             Knots.Add(knot);
-            knot.transform.position += Vector3.up;
+            knot.transform.position += Vector3.up * 1.5f;
             knot.transform.rotation *= Quaternion.FromToRotation(knot.transform.forward, -point.Value);
         }
-        // Compute the maximum segment length for constant lerp/scale factor
-        float maxSegmentLength = 0;
         for (int i = 0; i < Knots.Count - LookAheadCoefficient(); i++)
         {
-            float nextSegmentLength = (Knots[i].transform.position + Knots[i + 1].transform.position).magnitude;
+            float nextSegmentLength = (Knots[i].transform.position - Knots[i + 1].transform.position).magnitude;
             if (nextSegmentLength > maxSegmentLength)
             {
                 maxSegmentLength = nextSegmentLength;
             }
         }
-        MaxSegnmentLength = maxSegmentLength;
         curveInfo.currentPosition = Knots[0].transform.position;
     }
 
@@ -132,10 +149,10 @@ public abstract class Spline : MonoBehaviour
             // Draw the spline curve for visualization
             for (int i = 0; i < Knots.Count - LookAheadCoefficient(); i++)
             {
-                for (float j = 0; j < 1; j += 0.05f)
+                for (float j = 0; j < 1; j += 0.1f)
                 {
                     Gizmos.color = Color.green;
-                    Gizmos.DrawSphere(CubicSplineAtSegment(j, i), 0.1f);
+                    Gizmos.DrawSphere(CubicSplineAtSegment(j, i), 0.05f);
                 }
             }
 
@@ -148,7 +165,6 @@ public abstract class Spline : MonoBehaviour
                 Gizmos.color = Color.cyan;
                 Vector3 curvePositionGizmo = CubicSplineAtSegment(u, segment);
                 Gizmos.DrawSphere(curvePositionGizmo, 0.5f);
-
                 Gizmos.color = Color.magenta;
                 Vector3 curveVelocityGizmo = DerivativeAtSegment(u, segment);
                 Gizmos.DrawRay(curvePositionGizmo, curveVelocityGizmo);

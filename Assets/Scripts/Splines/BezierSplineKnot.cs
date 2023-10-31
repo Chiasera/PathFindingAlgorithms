@@ -15,8 +15,8 @@ public class BezierSplineKnot : SplineKnot
         if (Selection.Contains(this.gameObject) || Selection.Contains(mainHandle.gameObject) || Selection.Contains(constrainedHandle.gameObject))
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawSphere(mainHandle.transform.position, 0.5f);
-            Gizmos.DrawSphere(constrainedHandle.transform.position, 0.5f);
+            Gizmos.DrawSphere(mainHandle.transform.position, 0.1f);
+            Gizmos.DrawSphere(constrainedHandle.transform.position, 0.1f);
             Gizmos.DrawLine(mainHandle.position, constrainedHandle.position);
         }
     }
