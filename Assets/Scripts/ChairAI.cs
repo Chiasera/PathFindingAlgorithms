@@ -51,9 +51,9 @@ public class ChairAI: AgentAI
     protected override void SwitchCells(Cell newCell)
     {
         currentCell.CellType = CellType.Basic;
-        foreach(Cell neigbor in currentCell.GetNeighbors())
+        foreach(Cell neighbor in currentCell.GetNeighbors())
         {
-            neigbor.CellType = CellType.Basic;
+            neighbor.CellType = CellType.Basic;
         }
         foreach(Cell neighbor in newCell.GetNeighbors())
         {

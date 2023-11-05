@@ -69,6 +69,14 @@ public abstract class Cell : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        if(this == GameManager.goalCell)
+        {
+            cellType = CellType.Goal;
+        }
+    }
+
     protected void UpdateTravelCost()
     {
         switch (cellType)
